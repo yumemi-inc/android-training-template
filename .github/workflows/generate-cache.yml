@@ -1,0 +1,36 @@
+name: Generate cache
+
+# デフォルトブランチやマージ先ブランチでgradleとgemのキャッシュを作成(プルリクエストの新規作成時にこのキャッシュが適用される)
+
+on:
+  push:
+    branches:
+      - 'main'
+      - '**/develop'
+
+jobs:
+  generate:
+    name: Generate cache
+    runs-on: ubuntu-20.04
+    env:
+      # Gemfileの場所がプロジェクトルート以外の場合
+      BUNDLE_GEMFILE: ${{ github.workspace }}/.github/workflows/Gemfile
+    steps:
+      - name: Check out
+        uses: actions/checkout@v3
+      - name: Set up JDK
+        id: setup-java
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+          cache: 'gradle' # restore caches for gradle automatically
+      - name: Download dependencies
+        # if no caches found for gradle
+        if: steps.setup-java.outputs.cache-hit != 'true'
+        run: ./gradlew androidDependencies
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.7'
+          bundler-cache: true # runs 'bundle install' and caches installed gems automatically

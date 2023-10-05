@@ -1,0 +1,47 @@
+name: Check pull request
+
+on: pull_request
+
+permissions:
+  # dangerでPRにコメントする場合に必要
+  pull-requests: write
+
+jobs:
+  check:
+    name: Check pull request
+    runs-on: ubuntu-20.04
+    env:
+      # Gemfileの場所がプロジェクトルート以外の場合
+      BUNDLE_GEMFILE: ${{ github.workspace }}/.github/workflows/Gemfile
+    steps:
+      - name: Check out
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+          cache: 'gradle' # restore caches for gradle automatically
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.7'
+          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+      - name: Run ktlint
+        run: ./gradlew ktlintCheck
+      - name: Run Android Lint
+        run: ./gradlew lintRelease
+      - name: Run Unit Test
+        run: ./gradlew testDebugUnitTest --stacktrace
+      - name: Run Danger
+        if: success() || failure() # Do nothing if canceled
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JOB_STATUS: ${{ job.status }}
+        run: |
+          bundle exec danger \
+            --dangerfile=.github/workflows/Dangerfile \
+            --remove-previous-comments \
+            --fail-on-errors=true
