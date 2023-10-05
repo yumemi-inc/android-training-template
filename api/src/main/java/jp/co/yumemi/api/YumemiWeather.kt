@@ -6,6 +6,8 @@ import android.content.Context
 import android.os.NetworkOnMainThreadException
 import com.squareup.moshi.Moshi
 import jp.co.yumemi.api.model.DateAdapter
+import jp.co.yumemi.api.model.ForecastPoint
+import jp.co.yumemi.api.model.ForecastResponse
 import jp.co.yumemi.api.model.Weather
 import jp.co.yumemi.api.model.WeatherRequest
 import jp.co.yumemi.api.model.WeatherResponse
@@ -91,6 +93,29 @@ class YumemiWeather internal constructor(
         )
         val responseAdapter = moshi.adapter(WeatherResponse::class.java)
         responseAdapter.toJson(response)
+    }
+
+    suspend fun fetchJsonForecastAsync(json: String): String = waitAtLeast(1_500) {
+
+        val requestAdapter = moshi.adapter(WeatherRequest::class.java)
+        val request = requestAdapter.fromJson(json) ?: throw IllegalArgumentException()
+
+        val city = City.values.find { it.name == request.area }
+            ?: throw IllegalArgumentException("Invalid area requested: ${request.area}")
+        val result = api.fetchWeatherForecast(city.id)
+        val forecast = ForecastResponse(
+            area = request.area,
+            list = result.list.map {
+                ForecastPoint(
+                    weather = it.weather.representAsWeather().name.lowercase(),
+                    temperature = it.main.temperature.roundToInt(),
+                    date = it.date,
+                )
+            }
+        )
+
+        val forecastAdapter = moshi.adapter(ForecastResponse::class.java)
+        forecastAdapter.toJson(forecast)
     }
 
     @OptIn(ExperimentalTime::class)

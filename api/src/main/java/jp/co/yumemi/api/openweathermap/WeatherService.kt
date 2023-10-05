@@ -4,6 +4,7 @@ import com.squareup.moshi.Moshi
 import jp.co.yumemi.api.BuildConfig
 import jp.co.yumemi.api.openweathermap.model.CurrentWeather
 import jp.co.yumemi.api.openweathermap.model.UnixTimestampAdapter
+import jp.co.yumemi.api.openweathermap.model.WeatherForecast
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -14,6 +15,9 @@ import java.util.Date
 internal interface WeatherService {
     @GET("data/2.5/weather")
     suspend fun fetchCurrentWeather(@Query("id") cityId: Int): CurrentWeather
+
+    @GET("data/2.5/forecast")
+    suspend fun fetchWeatherForecast(@Query("id") cityId: Int): WeatherForecast
 
     companion object {
         fun create(

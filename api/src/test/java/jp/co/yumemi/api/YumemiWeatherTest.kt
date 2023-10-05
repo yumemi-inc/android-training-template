@@ -7,6 +7,7 @@ import com.squareup.moshi.Moshi
 import io.mockk.every
 import io.mockk.mockk
 import jp.co.yumemi.api.model.DateAdapter
+import jp.co.yumemi.api.model.ForecastResponse
 import jp.co.yumemi.api.model.WeatherResponse
 import jp.co.yumemi.api.openweathermap.WeatherService
 import kotlinx.coroutines.Dispatchers
@@ -133,5 +134,32 @@ class YumemiWeatherTest {
         Truth.assertThat(response.area).isEqualTo("東京")
         Truth.assertThat(response.maxTemp).isEqualTo(12)
         Truth.assertThat(response.minTemp).isEqualTo(9)
+    }
+
+    @Test
+    fun fetchJsonForecastAsync() = runTest {
+        every { random.nextInt(any(), any()) } returns 0
+
+        val json = context.assets.open("weather_forecast_tokyo.json").use {
+            it.readBytes().toString(Charsets.UTF_8)
+        }
+        server.enqueue(
+            MockResponse()
+                .setResponseCode(200)
+                .setBody(json)
+        )
+
+        val value = withContext(Dispatchers.IO) {
+            yumemiWeather.fetchJsonForecastAsync(testRequest())
+        }
+        val forecastAdapter = moshi.adapter(ForecastResponse::class.java)
+        val response = forecastAdapter.fromJson(value)!!
+        Truth.assertThat(response.area).isEqualTo("東京")
+        Truth.assertThat(response.list.size).isEqualTo(16)
+        response.list[0].let {
+            Truth.assertThat(it.weather).isEqualTo("cloudy")
+            Truth.assertThat(it.temperature).isEqualTo(9)
+            Truth.assertThat(it.date.time).isEqualTo(1671613200_000L)
+        }
     }
 }
