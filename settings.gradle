@@ -1,0 +1,3 @@
+rootProject.name = "droidtraining"
+include ':app'
+include ':api'

@@ -1,0 +1,57 @@
+name: "setup"
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  setup:
+    runs-on: ubuntu-20.04
+    permissions:
+      contents: write
+      issues: write
+    timeout-minutes: 10
+    if: github.repository != 'yumemi-inc/android-training-template'
+    env:
+      src_repo: yumemi-inc/android-training-template
+      dst_repo: ${{ github.repository }}
+      access_token: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Check out
+        uses: actions/checkout@v3
+        with:
+          token: ${{ env.access_token }}
+      - name: Git config
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+      - name: Setup branches
+        run: |
+          git remote add template-repo https://github.com/${{ env.src_repo }}.git
+          git fetch --all
+          branches=($(git branch -r | grep template-repo/template/ | sed "s/template-repo\///"))
+          for branch in "${branches[@]}"; do
+            echo $branch
+            git checkout -b $branch
+            git merge --allow-unrelated-histories -X theirs --no-edit "template-repo/${branch}"
+            git push origin $branch
+            git checkout main
+          done
+          git remote rm template-repo
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.7'
+      - name: Copy Issues
+        run: |
+          gem install octokit -v '6.0.1'
+          ruby .github/workflows/copy-issue.rb
+      - name: Cleanup
+        run: |
+          mv -f .github/README_TEMPLATE.md README.md 
+          rm -rf .github/workflows
+      - name: Commit & Push
+        run: |
+          git add .
+          git commit -m "Template Setup"
+          git push origin main
