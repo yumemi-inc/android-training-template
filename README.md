@@ -10,7 +10,7 @@ Androidアプリ開発の基礎復習、実務スキルを身に付けるため�
 
 ## 環境
 
-Android Studio Electric Eel | 2022.1.1 以上のバージョン
+Android Studio Giraffe | 2022.3.1 以上のバージョン
 
 [最新の Android Studioをダウンロードする](https://developer.android.com/studio)
 
