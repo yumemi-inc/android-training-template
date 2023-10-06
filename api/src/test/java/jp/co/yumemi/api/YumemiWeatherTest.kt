@@ -7,7 +7,6 @@ import io.mockk.every
 import io.mockk.mockk
 import jp.co.yumemi.api.model.DateAdapter
 import jp.co.yumemi.api.model.WeatherResponse
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
@@ -18,7 +17,6 @@ import org.robolectric.annotation.Config
 import java.util.Date
 import kotlin.random.Random
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [30])
 class YumemiWeatherTest {
