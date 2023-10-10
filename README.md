@@ -66,6 +66,8 @@ Android Studio Giraffe | 2022.3.1 以上のバージョン
 Issueページでlabelのフィルターを利用し、取り組むべき課題の一覧を見てみましょう。
 原則としてIssue番号の小さい順に取り組んでいき、全ての必須課題をクリアしたら修了です！
 
+[Issueの順序など詳細はフローチャートを参照してください](.github/issue_flowchart.md)
+
 <img width="600" src="https://user-images.githubusercontent.com/25225028/220609765-d6c8356d-3074-4f26-a1f6-a1f25c89b36b.png">
 
 
