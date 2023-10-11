@@ -29,13 +29,15 @@ jobs:
         run: |
           git remote add template-repo https://github.com/${{ env.src_repo }}.git
           git fetch --all
-          branches=($(git branch -r | grep template-repo/template/ | sed "s/template-repo\///"))
-          for branch in "${branches[@]}"; do
-            echo $branch
-            git checkout -b $branch
-            git merge --allow-unrelated-histories -X theirs --no-edit "template-repo/${branch}"
-            git push origin $branch
-            git checkout main
+          src=($(git branch -r | grep template-repo/template/ | sed "s/template-repo\///"))
+          dst=($(git branch -r | grep origin/template/ | sed "s/origin\///"))
+          for branch in "${src[@]}"; do
+            if [[ ! "${dst[@]}" =~ "${branch}" ]]; then
+              git checkout -b $branch
+              git merge --allow-unrelated-histories -X theirs --no-edit "template-repo/${branch}"
+              git push origin $branch
+              git checkout main
+            fi
           done
           git remote rm template-repo
       - name: Setup Ruby
