@@ -1,5 +1,6 @@
 name: "setup"
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -29,12 +30,13 @@ jobs:
         run: |
           git remote add template-repo https://github.com/${{ env.src_repo }}.git
           git fetch --all
+          git merge --allow-unrelated-histories --no-edit "template-repo/main"
           src=($(git branch -r | grep template-repo/template/ | sed "s/template-repo\///"))
           dst=($(git branch -r | grep origin/template/ | sed "s/origin\///"))
           for branch in "${src[@]}"; do
             if [[ ! "${dst[@]}" =~ "${branch}" ]]; then
               git checkout -b $branch
-              git merge --allow-unrelated-histories -X theirs --no-edit "template-repo/${branch}"
+              git merge --no-edit "template-repo/${branch}"
               git push origin $branch
               git checkout main
             fi
