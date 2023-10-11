@@ -23,8 +23,12 @@ def with_retry
   end
 end
 
+# 課題issueのラベル名
+label_names = ['必須','任意','選択必須','View','Compose']
+
 # label一覧の取得
 labels = client.labels(src_repo)
+labels.filter!{|label| label_names.include?(label.name)}
 
 # labelを追加
 labels.each do |label|
@@ -49,7 +53,6 @@ end.to_h
 # issue一覧の取得
 # このAPIではissueとPRは同一視されるがopenなPRは無い前提で実行
 issues = client.list_issues(src_repo, {sort: "created", direction: "asc"})
-# 課題issueのみ抽出
 label_names = ['必須','任意','選択必須']
 issues.filter! do |i|
   i.labels.any?{|label| label_names.include?(label.name)}
