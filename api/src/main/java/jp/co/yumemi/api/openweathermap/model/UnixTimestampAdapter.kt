@@ -5,7 +5,7 @@ import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import java.util.Date
 
-internal class UnixTimestampAdapter : JsonAdapter<Date>(){
+internal class UnixTimestampAdapter : JsonAdapter<Date>() {
     override fun fromJson(reader: JsonReader): Date {
         val timestamp = reader.nextLong()
         return Date(timestamp * 1000L)
