@@ -12,7 +12,7 @@ plugins {
 // このAPI実装ではOpenWeatherMapを利用します
 // 1 こちらのサイトからAPI keyを取得します https://home.openweathermap.org/api_keys
 // 2 ./apikey.properties にAPI keyを記載します
-//     api_key="${your_api_key}" (二重引用符が必要です！)
+//     api_key=${your_api_key}
 val apiKey: String = project.file("apikey.properties").let {
     if (it.exists()) {
         val input = FileInputStream(it)
@@ -32,7 +32,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
 
-        buildConfigField("String", "API_KEY", apiKey)
+        buildConfigField("String", "API_KEY", "\"$apiKey\"")
     }
 
     buildTypes {
