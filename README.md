@@ -75,7 +75,7 @@ Issueページでlabelのフィルターを利用し、取り組むべき課題�
 
 1. main ブランチから課題用のブランチを切って作業： `feature/{#}`
 2. 完了したら Pull Requestを作成してレビューを依頼
-3. PRがapproveされたらmasterブランチにマージ
+3. PRがapproveされたらmainブランチにマージ
 4. 次の課題へ進む
 
 
