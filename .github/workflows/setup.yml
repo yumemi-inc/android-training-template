@@ -28,6 +28,8 @@ jobs:
           git config --local user.name "GitHub Action"
       - name: Setup branches
         run: |
+          # templateリポジトリの main,template/* ブランチの履歴をそのまま持ってくる
+          # 後続の選択必須課題で template/* ブランチを main にマージするとき不要なコンフリクトを避ける
           git remote add template-repo https://github.com/${{ env.src_repo }}.git
           git fetch --all
           git merge --allow-unrelated-histories --no-edit "template-repo/main"
@@ -36,6 +38,7 @@ jobs:
           for branch in "${src[@]}"; do
             if [[ ! "${dst[@]}" =~ "${branch}" ]]; then
               git checkout -b $branch
+              # workflows権限が無く.github/workflows以下に新規ファイルをpushできないため、既存のmainブランチに一旦マージする
               git merge --no-edit "template-repo/${branch}"
               git push origin $branch
               git checkout main
