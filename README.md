@@ -20,7 +20,7 @@ Android Studio Giraffe | 2022.3.1 以上のバージョン
 
 <img src="https://user-images.githubusercontent.com/25225028/248723114-3db906be-ac27-4072-bab6-b8fa15663b7f.png">
 
-> **Warning**
+> [!WARNING]
 >
 > 「Include all branches」オプションは**チェックしない**でください
 > <img src="https://user-images.githubusercontent.com/25225028/248724454-ee7e2890-6742-4e3a-bb0a-2f80a6ccb4ef.png">
@@ -44,7 +44,7 @@ Android Studio Giraffe | 2022.3.1 以上のバージョン
 | 選択必須  | 取り組む必要がありますが、作成済みコードを利用してもよいです |  
 | 任意    | スキップも可能です                      |  
 
-> **Note**
+> [!NOTE]  
 >
 > ### すべての課題を完了する必要はありません
 >
